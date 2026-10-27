@@ -8,8 +8,8 @@
 // ▼▼▼ 여기 두 줄만 바꾸면 됩니다 ▼▼▼
 // Supabase 대시보드 위쪽의 [Connect] 버튼, 또는 Settings > API Keys 에서 복사하세요.
 // 따옴표(' ')는 지우지 말고, 그 안의 글자만 바꿔 넣으세요.
-const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-const SUPABASE_KEY = 'YOUR-PUBLISHABLE-KEY';   // sb_publishable_ 로 시작하는 키 (예전 anon 키도 됨)
+const SUPABASE_URL = 'https://pjvtzwtmfgdanjfjhehg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_OCHq4n15skLnU1HA6iTBxg_KzLLVlrE';   // sb_publishable_ 로 시작하는 키 (예전 anon 키도 됨)
 // ▲▲▲ 여기까지 ▲▲▲
 
 const BUCKET = 'pdfs';
