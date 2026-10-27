@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>역사교실 자료실</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 노션식 단일 컬럼 — 헤더 / 검색·필터 툴바 / 카드 그리드, 상세·업로드는 모달 */
+:root{
+  --bg:#FAFAFB; --surface:#FFFFFF; --sunken:#F3F4F7; --line:#E6E8EE;
+  --fg:#1E2229; --muted:#6A7180; --faint:#A0A6B2;
+  --accent:#3157E0; --accent-fg:#FFFFFF; --accent-soft:#EDF1FD;
+  --danger:#C8372D; --danger-soft:#FCEDEC;
+  --shadow:0 1px 2px rgba(20,30,60,.05),0 8px 24px rgba(20,30,60,.06);
+  --font-body:"IBM Plex Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15171C; --surface:#1C1F26; --sunken:#22262E; --line:#2D313B;
+  --fg:#E8EAEF; --muted:#9AA1AE; --faint:#6B7280;
+  --accent:#7E9BFF; --accent-fg:#0F1630; --accent-soft:#232C47;
+  --danger:#F07A70; --danger-soft:#3A2224;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15171C; --surface:#1C1F26; --sunken:#22262E; --line:#2D313B;
+  --fg:#E8EAEF; --muted:#9AA1AE; --faint:#6B7280;
+  --accent:#7E9BFF; --accent-fg:#0F1630; --accent-soft:#232C47;
+  --danger:#F07A70; --danger-soft:#3A2224;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;color:inherit;text-decoration:none;border-radius:10px;cursor:pointer}
+.brand:hover h1{color:var(--accent)}
+.brand h1{transition:color .15s}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;flex:none}
+.brand h1{margin:0;font-size:21px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:38px;padding:0 15px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;font-size:14px;white-space:nowrap;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--sunken)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--danger)}
+.btn.danger.solid{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:none}
+
+/* toolbar */
+.toolbar{display:flex;flex-direction:column;gap:12px}
+.searchrow{display:flex;gap:10px;flex-wrap:wrap}
+.search{flex:1 1 280px;position:relative;min-width:0}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--faint);pointer-events:none}
+.search input{width:100%;height:42px;padding:0 38px 0 40px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:15px}
+.search input::placeholder{color:var(--faint)}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;display:grid;place-items:center}
+.clear:hover{background:var(--sunken)}
+select.sort{height:42px;border-radius:9px;border:1px solid var(--line);background:var(--surface);padding:0 12px;cursor:pointer}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:13.5px;display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.chip:hover{color:var(--fg)}
+.chip .n{font-family:var(--font-mono);font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.chip[aria-pressed="true"] .n{color:var(--bg);opacity:.65}
+.resultline{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .15s;min-width:0}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));box-shadow:var(--shadow);transform:translateY(-1px)}
+.cardmain{all:unset;box-sizing:border-box;display:flex;flex-direction:column;cursor:pointer;flex:1;min-width:0}
+.cardmain:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:var(--r)}
+.cfoot{padding:0 14px 14px}
+.cdl{width:100%;height:34px;font-size:13.5px;color:var(--accent);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.cdl:hover{background:var(--accent-soft)}
+.thumb{aspect-ratio:16/10;max-width:100%;background:var(--sunken);border-bottom:1px solid var(--line);position:relative;overflow:hidden;display:grid;place-items:center}
+.thumb img{width:82%;margin-top:14%;align-self:start;border-radius:3px 3px 0 0;box-shadow:0 2px 10px rgba(20,30,60,.14);background:#fff}
+.thumb .ph{color:var(--faint);font-family:var(--font-mono);font-size:12px}
+.ext{position:absolute;left:10px;top:10px;font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:.06em;padding:2px 6px;border-radius:4px;background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.sample{position:absolute;right:10px;top:10px;font-size:11px;padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.cbody{padding:13px 14px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.cat{font-size:12px;color:var(--muted);font-weight:500}
+.card h3{margin:0;font-size:15.5px;font-weight:600;line-height:1.4;letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+mark{background:var(--accent-soft);color:var(--accent);border-radius:3px;padding:0 1px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--font-mono);font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;margin-top:2px}
+.meta span{display:inline-flex;align-items:center;gap:4px}
+.meta svg{width:12px;height:12px}
+
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:48px 20px;text-align:center;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:12px}
+.empty strong{color:var(--fg);font-size:16px}
+.note{font-size:12.5px;color:var(--faint);text-align:center;text-wrap:balance}
+
+/* dialogs */
+dialog{border:0;padding:0;background:transparent;color:var(--fg);max-width:min(920px,calc(100vw - 32px));width:100%;max-height:calc(100dvh - 32px)}
+dialog::backdrop{background:rgba(15,20,30,.45);backdrop-filter:blur(2px)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;max-height:calc(100dvh - 32px)}
+.phead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.phead h2{margin:0;font-size:16px;font-weight:600}
+.x{width:32px;height:32px;border-radius:7px;border:0;background:transparent;cursor:pointer;color:var(--muted);display:grid;place-items:center;flex:none}
+.x:hover{background:var(--sunken)}
+.pbody{overflow:auto}
+
+.detail{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.viewer{background:var(--sunken);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.canvasbox{flex:1;display:grid;place-items:center;padding:20px;min-height:340px;overflow:auto}
+.canvasbox canvas{max-width:100%;height:auto;box-shadow:0 2px 14px rgba(20,30,60,.16);background:#fff;border-radius:2px}
+.pager{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;border-top:1px solid var(--line);font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pager .btn{height:30px;padding:0 10px}
+.info{padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.info h3{margin:0;font-size:21px;line-height:1.35;letter-spacing:-.02em;text-wrap:balance;overflow-wrap:anywhere}
+.desc{margin:0;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12.5px;padding:2px 9px;border-radius:5px;background:var(--sunken);color:var(--muted)}
+dl.props{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:13.5px;border-top:1px solid var(--line);padding-top:16px}
+dl.props dt{color:var(--faint)}
+dl.props dd{margin:0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.actions .btn.primary{flex:1 1 160px;height:42px}
+.confirm{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border-radius:9px;background:var(--danger-soft);font-size:13.5px}
+.confirm div{display:flex;gap:8px}
+
+/* upload */
+form.up{padding:20px;display:flex;flex-direction:column;gap:16px;max-width:560px;margin:0 auto;width:100%}
+.drop{border:1.5px dashed var(--line);border-radius:12px;padding:28px 16px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);transition:border-color .15s,background .15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop svg{width:28px;height:28px;color:var(--accent)}
+.drop strong{color:var(--fg);font-weight:600}
+.drop small{font-size:12.5px;color:var(--faint)}
+.filechip{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--sunken);min-width:0}
+.filechip .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.filechip .sz{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:500}
+.field label .opt{color:var(--faint);font-weight:400}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:9px 11px;width:100%}
+.field textarea{min-height:92px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{color:var(--danger);font-size:13px;min-height:0}
+.formfoot{display:flex;justify-content:flex-end;gap:8px}
+
+/* 전체 화면 뷰어 */
+dialog#readerDlg{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;inset:0}
+.reader{background:var(--sunken);height:100%;display:flex;flex-direction:column}
+.rhead{display:flex;align-items:center;gap:10px;background:var(--surface);border-bottom:1px solid var(--line);
+  padding-top:calc(10px + env(safe-area-inset-top,0px));padding-bottom:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rtitle{flex:1;min-width:0;display:flex;flex-direction:column}
+.rtitle h2{margin:0;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtitle span{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.rpages{flex:1;overflow:auto;display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding-top:24px;padding-bottom:calc(32px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.rpages canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 2px 14px rgba(20,30,60,.16);border-radius:2px}
+.rpages .ph{color:var(--muted);padding:40px 0}
+/* 하단 푸터 */
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;font-size:13px;color:var(--faint)}
+.foot a,.linkbtn{color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;background:none;border:0;padding:0;cursor:pointer;font-size:13px}
+.foot a:hover,.linkbtn:hover{color:var(--accent);text-decoration:underline}
+.foot svg,.linkbtn svg{width:14px;height:14px}
+
+/* 관리자 */
+.login{max-width:400px;width:100%;margin:24px auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;display:flex;flex-direction:column;gap:16px}
+.login h2{margin:0;font-size:19px;letter-spacing:-.01em}
+.login p{margin:-8px 0 0;color:var(--muted);font-size:13.5px}
+.login form{display:flex;flex-direction:column;gap:14px}
+.login .btn.primary{height:42px}
+.admbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.admbar h2{margin:0;font-size:19px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:8px}
+.admbar h2 small{font-family:var(--font-mono);font-size:13px;color:var(--faint);font-weight:400}
+.admact{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.admsearch{position:relative;flex:1 1 220px;max-width:320px;min-width:0}
+.admsearch input{width:100%;height:38px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 12px}
+.admsearch input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.wrap>*,#adminBox>*{min-width:0}
+#publicView,#adminView{margin:0;max-width:none}
+.tablewrap{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table.adm{width:100%;border-collapse:collapse;font-size:14px;min-width:720px}
+table.adm th{text-align:left;font-weight:500;font-size:12.5px;color:var(--faint);padding:10px 14px;border-bottom:1px solid var(--line);background:var(--sunken);white-space:nowrap}
+table.adm td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.adm tr:last-child td{border-bottom:0}
+table.adm tbody tr:hover{background:color-mix(in srgb,var(--sunken) 60%,transparent)}
+table.adm .num{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.adm .tt{font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+table.adm .sub{font-size:12px;color:var(--faint);overflow-wrap:anywhere}
+table.adm .acts{white-space:nowrap;text-align:right}
+table.adm .acts .btn{margin-left:4px}
+table.adm .ask{font-size:13px;color:var(--danger);margin-right:4px}
+table.adm .none{text-align:center;color:var(--muted);padding:36px 14px}
+.btn.sm{height:30px;padding:0 10px;font-size:13px}
+.catpill{font-size:12px;padding:2px 8px;border-radius:5px;background:var(--sunken);color:var(--muted);white-space:nowrap}
+.hint{margin:-8px 0 0;font-size:12.5px;color:var(--faint)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:9px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:720px){
+  .detail{grid-template-columns:1fr}
+  .viewer{border-right:0;border-bottom:1px solid var(--line)}
+  .canvasbox{min-height:260px}
+  .row2{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#" id="homeLink" aria-label="역사교실 자료실 홈으로">
+      <div class="logo" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+      </div>
+      <div><h1>역사교실 자료실</h1><p>내일을 보는 힘! 文, 史, 哲.</p></div>
+    </a>
+  </header>
+
+  <div id="publicView" class="wrap" style="padding:0">
+  <section class="toolbar" aria-label="검색과 필터">
+    <div class="searchrow">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="제목, 설명, 키워드로 검색" autocomplete="off" aria-label="자료 검색">
+        <button class="clear" id="clearQ" type="button" aria-label="검색어 지우기" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <select class="sort" id="sort" aria-label="정렬">
+        <option value="new">최신순</option>
+        <option value="down">다운로드 많은 순</option>
+        <option value="title">제목순</option>
+      </select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="카테고리"></div>
+  </section>
+
+  <div class="resultline"><span id="count"></span><span id="storeNote"></span></div>
+  <main class="grid" id="grid" aria-live="polite"></main>
+  <div class="empty" id="empty" hidden></div>
+  </div>
+
+  <!-- 관리자 화면 -->
+  <section id="adminView" class="wrap" style="padding:0" hidden aria-label="관리자">
+    <div class="login" id="loginBox">
+      <h2 id="loginTitle">관리자 로그인</h2>
+      <p id="loginDesc">자료를 등록·수정·삭제하려면 로그인하세요.</p>
+      <form id="loginForm" novalidate>
+        <div class="field" id="emailField" hidden>
+          <label for="loginEmail">이메일</label>
+          <input id="loginEmail" type="email" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="loginPw">비밀번호</label>
+          <input id="loginPw" type="password" autocomplete="current-password">
+        </div>
+        <div class="field" id="pw2Field" hidden>
+          <label for="loginPw2">비밀번호 확인</label>
+          <input id="loginPw2" type="password" autocomplete="new-password">
+        </div>
+        <div class="err" id="loginErr" role="alert"></div>
+        <button class="btn primary" type="submit" id="loginSubmit">로그인</button>
+      </form>
+      <button class="linkbtn" type="button" data-go="public">← 자료실로 돌아가기</button>
+    </div>
+
+    <div id="adminBox" hidden style="display:flex;flex-direction:column;gap:16px">
+      <div class="admbar">
+        <h2>자료 관리 <small id="admCount"></small></h2>
+        <div class="admact">
+          <button class="btn primary" type="button" id="admAdd">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>자료 등록
+          </button>
+          <button class="btn" type="button" data-go="public">자료실 보기</button>
+          <button class="btn" type="button" id="admLogout">로그아웃</button>
+        </div>
+      </div>
+      <div class="admsearch"><input id="admQ" type="search" placeholder="제목, 파일명으로 찾기" aria-label="관리 목록 검색"></div>
+      <div class="tablewrap">
+        <table class="adm">
+          <thead><tr><th>제목</th><th>카테고리</th><th>용량</th><th>등록일</th><th>다운로드</th><th style="text-align:right">관리</th></tr></thead>
+          <tbody id="admRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <p class="note" id="localNote">자료는 지금 이 브라우저에만 저장됩니다. 여러 사람이 함께 쓰려면 Supabase를 연결하세요.</p>
+  <footer class="foot">
+    <span>© 2026 역사교실 자료실</span>
+    <a href="#admin" id="adminLink">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>관리자
+    </a>
+  </footer>
+</div>
+
+<!-- 상세 모달 -->
+<dialog id="detailDlg" aria-labelledby="dTitle">
+  <div class="panel">
+    <div class="phead"><h2 id="dCatHead">자료 상세</h2>
+      <button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="pbody">
+      <div class="detail">
+        <div class="viewer">
+          <div class="canvasbox" id="canvasBox"><span class="ph" id="prevMsg">미리보기를 불러오는 중…</span><canvas id="pdfCanvas" hidden></canvas></div>
+          <div class="pager">
+            <button class="btn" id="prevPg" type="button" aria-label="이전 페이지">‹</button>
+            <span id="pgInfo">– / –</span>
+            <button class="btn" id="nextPg" type="button" aria-label="다음 페이지">›</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 id="dTitle"></h3>
+          <p class="desc" id="dDesc"></p>
+          <div class="tags" id="dTags"></div>
+          <dl class="props">
+            <dt>카테고리</dt><dd id="dCat"></dd>
+            <dt>파일명</dt><dd id="dFile"></dd>
+            <dt>용량</dt><dd id="dSize"></dd>
+            <dt>등록일</dt><dd id="dDate"></dd>
+            <dt>다운로드</dt><dd id="dDown"></dd>
+          </dl>
+          <div class="actions">
+            <button class="btn primary" id="dlBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z"/><circle cx="12" cy="12" r="3"/></svg>다운로드 · 바로 보기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 업로드 모달 -->
+<dialog id="uploadDlg" aria-labelledby="uTitle">
+  <div class="panel">
+    <div class="phead"><h2 id="uTitle">자료 등록</h2>
+      <button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="pbody">
+      <form class="up" id="upForm" novalidate>
+        <label class="drop" id="drop" for="fileIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          <strong id="dropText">PDF 파일을 끌어다 놓거나 클릭해서 선택</strong>
+          <small>PDF만 가능 · 최대 20MB</small>
+          <input id="fileIn" type="file" accept="application/pdf,.pdf" hidden>
+        </label>
+        <div class="filechip" id="fileChip" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);flex:none"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+          <span class="nm" id="fileName"></span><span class="sz" id="fileSize"></span>
+          <button class="x" type="button" id="fileRemove" aria-label="파일 빼기"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="field">
+          <label for="fTitle">제목</label>
+          <input id="fTitle" maxlength="80" placeholder="예: 3주차 수업 정리 노트" required>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="fCat">카테고리</label>
+            <select id="fCat"></select>
+          </div>
+          <div class="field">
+            <label for="fTags">키워드 <span class="opt">(쉼표로 구분)</span></label>
+            <input id="fTags" placeholder="계몽주의, 철학">
+          </div>
+        </div>
+        <div class="field">
+          <label for="fDesc">설명 <span class="opt">(선택)</span></label>
+          <textarea id="fDesc" maxlength="500" placeholder="어떤 자료인지, 수업에서 어떻게 쓰는지 적어주세요"></textarea>
+        </div>
+        <div class="err" id="upErr" role="alert"></div>
+        <div class="formfoot">
+          <button class="btn" type="button" data-close>취소</button>
+          <button class="btn primary" type="submit" id="upSubmit">등록하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<!-- 전체 화면 PDF 뷰어 (새 창이 막힌 환경용) -->
+<dialog id="readerDlg" aria-labelledby="rTitle">
+  <div class="reader">
+    <div class="rhead">
+      <button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="rtitle"><h2 id="rTitle"></h2><span id="rInfo"></span></div>
+      <button class="btn" type="button" id="rTab" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>새 탭에서 열기
+      </button>
+      <button class="btn" type="button" id="rSave">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>파일로 저장
+      </button>
+    </div>
+    <div class="rpages" id="rPages"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<!-- PDF.js (미리보기용). worker 스크립트를 함께 불러오면 별도 설정 없이 동작합니다 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+
+<!-- Supabase 연결: supabase-store.js 의 주소/키 두 줄만 채우면 자동으로 켜집니다 (비어 있으면 브라우저 저장 모드) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
+<script src="supabase-store.js"></script>
+
+<script>
+/* =========================================================
+   1) 설정
+   ========================================================= */
+const CATEGORIES = ['미리보기', '숙제', '다시보기', '정리', '이달의 詩'];
+const MAX_SIZE = 20 * 1024 * 1024; // 20MB
+
+/* =========================================================
+   2) 저장소 (LocalStore = 브라우저 IndexedDB)
+   모든 저장소는 같은 함수들을 가집니다.
+   자료: init / list / add / update / getFile / incrementDownloads / remove
+   관리자: authMode / needsSetup / setupPassword / login / isAdmin / logout
+   → window.SupabaseStore가 있으면 그걸 대신 씁니다.
+   ========================================================= */
+const LocalStore = {
+  name: 'local',
+  db: null,
+  mem: new Map(), // IndexedDB를 못 쓰는 환경(시크릿 창 등)용 임시 저장
+  async init() {
+    try {
+      this.db = await new Promise((res, rej) => {
+        const r = indexedDB.open('pdf-archive', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('docs', { keyPath: 'id' });
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      });
+    } catch (e) { this.db = null; }
+    const list = await this.list();
+    if (list.length === 0 && !this._seeded()) await seedSamples(this);
+    else await this._migrateCategories();
+  },
+  // 예전 카테고리(기획서/개발/디자인/기타)로 저장된 자료를 새 카테고리로 옮깁니다
+  async _migrateCategories() {
+    const OLD = { '기획서': '숙제', '개발': '다시보기', '디자인': '정리', '기타': '정리' };
+    const SAMPLE = { 'React 입문 강의록 1주차': '미리보기' };
+    const recs = this.db ? await this._req(this._store('readonly').getAll()) : [...this.mem.values()];
+    for (const r of recs) {
+      if (CATEGORIES.includes(r.category)) continue;
+      r.category = (r.sample && SAMPLE[r.title]) || OLD[r.category] || '정리';
+      await this._put(r);
+    }
+  },
+  _seeded() {
+    try { if (localStorage.getItem('pdf-archive-seeded')) return true; localStorage.setItem('pdf-archive-seeded', '1'); } catch (e) {}
+    return false;
+  },
+  _store(mode) { return this.db.transaction('docs', mode).objectStore('docs'); },
+  _req(r) { return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async _get(id) { return this.db ? this._req(this._store('readonly').get(id)) : this.mem.get(id); },
+  async _put(rec) { if (!this.db) { this.mem.set(rec.id, rec); return; } return this._req(this._store('readwrite').put(rec)); },
+  async list() {
+    const all = this.db ? await this._req(this._store('readonly').getAll()) : [...this.mem.values()];
+    return all.map(({ blob, ...meta }) => meta);
+  },
+  async add(meta, file) {
+    const rec = { id: uid(), downloads: 0, createdAt: new Date().toISOString(), ...meta, blob: file };
+    await this._put(rec);
+    const { blob, ...saved } = rec; return saved;
+  },
+  async getFile(id) { const r = await this._get(id); return r && r.blob; },
+  async incrementDownloads(id) {
+    const r = await this._get(id); r.downloads = (r.downloads || 0) + 1; await this._put(r); return r.downloads;
+  },
+  async update(id, meta, file) {
+    const r = await this._get(id); if (!r) throw new Error('자료를 찾을 수 없어요.');
+    Object.assign(r, meta);
+    if (file) { r.blob = file; r.size = file.size; r.fileName = file.name; }
+    await this._put(r);
+    const { blob, ...saved } = r; return saved;
+  },
+  async remove(id) { if (!this.db) { this.mem.delete(id); return; } return this._req(this._store('readwrite').delete(id)); },
+
+  /* --- 관리자 인증 (이 브라우저 전용 비밀번호) --- */
+  authMode: 'password',
+  _memHash: null, _memSess: false,
+  _hash() { try { return localStorage.getItem('pdf-archive-admin') || this._memHash; } catch (e) { return this._memHash; } },
+  _sess(v) { this._memSess = v; try { v ? sessionStorage.setItem('pdf-archive-admin-session', '1') : sessionStorage.removeItem('pdf-archive-admin-session'); } catch (e) {} },
+  async needsSetup() { return !this._hash(); },
+  async setupPassword(pw) {
+    const h = await sha256(pw); this._memHash = h;
+    try { localStorage.setItem('pdf-archive-admin', h); } catch (e) {}
+    this._sess(true);
+  },
+  async login({ password }) {
+    if ((await sha256(password)) !== this._hash()) throw new Error('비밀번호가 맞지 않아요.');
+    this._sess(true);
+  },
+  async isAdmin() { try { if (sessionStorage.getItem('pdf-archive-admin-session')) return true; } catch (e) {} return this._memSess; },
+  async logout() { this._sess(false); }
+};
+
+async function sha256(text) {
+  const data = 'pdf-archive:' + text;
+  if (window.crypto && crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  let h = 0; for (const c of data) h = (h * 31 + c.charCodeAt(0)) | 0; return 'x' + h;
+}
+
+const Store = window.SupabaseStore || LocalStore;
+
+/* =========================================================
+   3) 처음 실행할 때 보여줄 예시 자료 (진짜 PDF를 즉석에서 만듭니다)
+   ========================================================= */
+async function seedSamples(store) {
+  const samples = [
+    { title: '서비스 기획서 템플릿 v2', category: '숙제', tags: ['템플릿', 'PRD', '기획'], downloads: 128, date: '2026-10-21',
+      description: '문제 정의부터 목표 지표, 요구사항, 일정까지 한 번에 정리할 수 있는 기획서 양식입니다. 신규 기능 제안할 때 그대로 복사해서 쓰세요.',
+      pdfTitle: 'Service Planning Template v2', pages: [['# 1. Problem', 'Who has the problem, and how often?', 'What do they do today instead?', '', '# 2. Goals & Metrics', 'Primary metric: weekly active uploaders', 'Guardrail: support tickets per 1k users', '', '# 3. Requirements', 'Must have / Should have / Could have'], ['# 4. Timeline', 'Week 1-2: discovery interviews', 'Week 3-4: prototype & usability test', 'Week 5-6: build, QA, release', '', '# 5. Risks', 'List open questions and owners here.']] },
+    { title: 'React 입문 강의록 1주차', category: '미리보기', tags: ['강의록', 'React', '프론트엔드'], downloads: 342, date: '2026-10-18',
+      description: '컴포넌트, props, state 개념을 예제 코드와 함께 정리한 1주차 강의 자료입니다. 실습 과제 3개 포함.',
+      pdfTitle: 'Intro to React - Week 1', pages: [['# Components', 'A component is a function that returns UI.', 'function Hello() { return <h1>Hello</h1> }', '', '# Props', 'Props pass data from parent to child.', '', '# State', 'useState keeps values between renders.'], ['# Homework', '1. Build a counter with + and - buttons', '2. Render a list from an array', '3. Lift state up between two inputs']] },
+    { title: '디자인 시스템 점검 체크리스트', category: '정리', tags: ['체크리스트', 'UI', '디자인시스템'], downloads: 87, date: '2026-10-14',
+      description: '컬러 토큰, 타이포 스케일, 간격, 컴포넌트 상태(hover/disabled/error)를 빠짐없이 점검하기 위한 체크리스트.',
+      pdfTitle: 'Design System Checklist', pages: [['# Color', '[ ] Every color comes from a token', '[ ] Contrast 4.5:1 for body text', '', '# Type', '[ ] One type scale, max 6 sizes', '', '# Components', '[ ] hover / focus / disabled / error states', '[ ] Dark mode checked']] },
+    { title: 'Git 협업 가이드 (브랜치·PR 규칙)', category: '다시보기', tags: ['Git', '협업', '가이드'], downloads: 211, date: '2026-10-09',
+      description: '팀에서 쓰는 브랜치 이름 규칙, 커밋 메시지 형식, PR 리뷰 절차를 정리한 문서입니다.',
+      pdfTitle: 'Git Collaboration Guide', pages: [['# Branches', 'main: always deployable', 'feature/<short-name> for new work', '', '# Commits', 'feat: / fix: / docs: / refactor:', '', '# Pull requests', 'One topic per PR, under 400 lines', 'At least one approval before merge']] },
+    { title: '사용자 인터뷰 질문지', category: '숙제', tags: ['UX리서치', '인터뷰'], downloads: 74, date: '2026-09-27',
+      description: '30분 사용자 인터뷰용 질문 목록. 도입 질문, 경험 탐색, 마무리 질문 순서로 구성되어 있어요.',
+      pdfTitle: 'User Interview Script', pages: [['# Warm-up (5 min)', 'Tell me about your role.', '', '# Experience (20 min)', 'Walk me through the last time you ...', 'What was the hardest part?', '', '# Wrap-up (5 min)', 'Anything we did not ask about?']] },
+    { title: '주간 회의록 양식', category: '정리', tags: ['회의록', '양식'], downloads: 56, date: '2026-10-02',
+      description: '안건, 결정 사항, 담당자와 기한을 한 장에 정리하는 회의록 양식입니다.',
+      pdfTitle: 'Weekly Meeting Notes', pages: [['# Date / Attendees', '', '# Agenda', '1.', '2.', '', '# Decisions', '', '# Action items', 'Owner | Task | Due']] },
+  ];
+  for (const s of samples) {
+    const blob = buildPdf(s.pdfTitle, s.pages);
+    const rec = { title: s.title, description: s.description + '\n\n(예시 자료입니다. 삭제해도 괜찮아요.)', category: s.category, tags: s.tags,
+      size: blob.size, fileName: s.pdfTitle.replace(/[^a-z0-9]+/gi, '-').toLowerCase() + '.pdf', sample: true };
+    if (store.name === 'local') {
+      await store._put({ id: uid(), downloads: s.downloads, createdAt: new Date(s.date + 'T10:00:00').toISOString(), ...rec, blob });
+    }
+  }
+}
+
+// 간단한 텍스트 PDF 생성기 (예시 자료 전용)
+function buildPdf(title, pages) {
+  const esc = s => s.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  const objs = [];
+  objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+  objs[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+  objs[4] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>';
+  let id = 5; const kids = [];
+  pages.forEach((lines, i) => {
+    const pid = id++, cid = id++; kids.push(pid);
+    let s = '0.93 0.95 0.99 rg 0 702 612 90 re f\n0.19 0.34 0.88 rg 0 698 612 4 re f\n';
+    s += `BT /F2 24 Tf 0.12 0.13 0.16 rg 56 738 Td (${esc(title)}) Tj ET\n`;
+    s += `BT /F1 9 Tf 0.45 0.48 0.55 rg 56 40 Td (Page ${i + 1} of ${pages.length}) Tj ET\n`;
+    let y = 650;
+    lines.forEach(l => {
+      const h = l.startsWith('# ');
+      if (l) s += `BT /${h ? 'F2' : 'F1'} ${h ? 15 : 12} Tf 0.15 0.17 0.2 rg 56 ${y} Td (${esc(h ? l.slice(2) : l)}) Tj ET\n`;
+      y -= h ? 26 : 19;
+    });
+    objs[cid] = `<< /Length ${s.length} >>\nstream\n${s}endstream`;
+    objs[pid] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${cid} 0 R >>`;
+  });
+  objs[2] = `<< /Type /Pages /Kids [${kids.map(k => k + ' 0 R').join(' ')}] /Count ${kids.length} >>`;
+  let out = '%PDF-1.4\n'; const off = [];
+  for (let i = 1; i < id; i++) { off[i] = out.length; out += `${i} 0 obj\n${objs[i]}\nendobj\n`; }
+  const xref = out.length;
+  out += `xref\n0 ${id}\n0000000000 65535 f \n` + off.slice(1).map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+  out += `trailer\n<< /Size ${id} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return new Blob([out], { type: 'application/pdf' });
+}
+
+/* =========================================================
+   4) 유틸
+   ========================================================= */
+const $ = s => document.querySelector(s);
+function uid() { return (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)); }
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function fmtSize(b) { if (b < 1024) return b + ' B'; if (b < 1048576) return (b / 1024).toFixed(1) + ' KB'; return (b / 1048576).toFixed(1) + ' MB'; }
+function fmtDate(iso) { const d = new Date(iso); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; }
+function highlight(text, q) {
+  const t = esc(text); if (!q) return t;
+  const i = text.toLowerCase().indexOf(q.toLowerCase()); if (i < 0) return t;
+  return esc(text.slice(0, i)) + '<mark>' + esc(text.slice(i, i + q.length)) + '</mark>' + esc(text.slice(i + q.length));
+}
+let toastTimer;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400); }
+const ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5"/></svg>';
+
+/* =========================================================
+   5) 목록 화면
+   ========================================================= */
+const state = { docs: [], q: '', cat: '전체', sort: 'new' };
+const thumbs = new Map(); // id → 썸네일 이미지(dataURL)
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  let list = state.docs.filter(d => state.cat === '전체' || d.category === state.cat);
+  if (q) list = list.filter(d => [d.title, d.description, ...(d.tags || [])].join(' ').toLowerCase().includes(q));
+  const by = { new: (a, b) => b.createdAt.localeCompare(a.createdAt), down: (a, b) => b.downloads - a.downloads, title: (a, b) => a.title.localeCompare(b.title, 'ko') };
+  return list.sort(by[state.sort]);
+}
+
+function renderChips() {
+  const counts = { '전체': state.docs.length };
+  CATEGORIES.forEach(c => counts[c] = state.docs.filter(d => d.category === c).length);
+  $('#chips').innerHTML = ['전체', ...CATEGORIES].map(c =>
+    `<button class="chip" type="button" data-cat="${c}" aria-pressed="${state.cat === c}">${c}<span class="n">${counts[c]}</span></button>`).join('');
+}
+
+function render() {
+  renderChips();
+  const list = filtered();
+  const q = state.q.trim();
+  $('#count').textContent = q ? `‘${q}’ 검색 결과 ${list.length}건` : `자료 ${list.length}건`;
+  $('#grid').innerHTML = list.map(d => `
+    <article class="card">
+    <button class="cardmain" type="button" data-id="${d.id}" aria-label="${esc(d.title)} 상세 정보">
+      <div class="thumb">
+        ${thumbs.get(d.id) ? `<img src="${thumbs.get(d.id)}" alt="">` : '<span class="ph">PDF</span>'}
+        <span class="ext">PDF</span>${d.sample ? '<span class="sample">예시</span>' : ''}
+      </div>
+      <div class="cbody">
+        <span class="cat">${esc(d.category)}</span>
+        <h3>${highlight(d.title, q)}</h3>
+        <div class="meta"><span>${fmtSize(d.size)}</span><span>${fmtDate(d.createdAt)}</span><span>${ICON_DOWN}${d.downloads.toLocaleString()}</span></div>
+      </div>
+    </button>
+    <div class="cfoot"><button class="btn cdl" type="button" data-open="${d.id}">${ICON_DOWN}다운로드 · 바로 보기</button></div>
+    </article>`).join('');
+  const empty = $('#empty');
+  empty.hidden = list.length > 0;
+  if (!list.length) {
+    empty.innerHTML = state.docs.length
+      ? `<strong>조건에 맞는 자료가 없어요</strong><span>다른 검색어를 쓰거나 카테고리를 ‘전체’로 바꿔보세요.</span><button class="btn" type="button" id="resetFilter">필터 초기화</button>`
+      : `<strong>아직 올라온 자료가 없어요</strong><span>선생님이 자료를 올리면 여기에 표시돼요.</span>`;
+  }
+  makeThumbs(list);
+}
+
+let thumbBusy = false;
+async function makeThumbs(list) {
+  if (thumbBusy || !window.pdfjsLib) return; thumbBusy = true;
+  try {
+    for (const d of list) {
+      if (thumbs.has(d.id)) continue;
+      try {
+        const blob = await Store.getFile(d.id);
+        const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+        const page = await pdf.getPage(1);
+        const vp = page.getViewport({ scale: 480 / page.getViewport({ scale: 1 }).width });
+        const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+        await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+        thumbs.set(d.id, c.toDataURL('image/jpeg', 0.82));
+        pdf.destroy();
+      } catch (e) { thumbs.set(d.id, ''); }
+      const box = document.querySelector(`.cardmain[data-id="${d.id}"] .thumb`);
+      if (box && thumbs.get(d.id)) { const ph = box.querySelector('.ph'); if (ph) ph.outerHTML = `<img src="${thumbs.get(d.id)}" alt="">`; }
+    }
+  } finally { thumbBusy = false; }
+}
+
+/* =========================================================
+   6) 상세 모달 + 미리보기 + 다운로드
+   ========================================================= */
+const viewer = { pdf: null, page: 1, doc: null };
+let claudeDownloads = null; // Claude 아티팩트 안에서만 생김. 배포한 사이트에서는 항상 null
+if (window.claude && window.claude.use) window.claude.use('downloads').then(x => { claudeDownloads = x; }).catch(() => {});
+
+async function openDetail(id) {
+  const d = state.docs.find(x => x.id === id); if (!d) return;
+  viewer.doc = d; viewer.page = 1;
+  $('#dCatHead').textContent = d.category;
+  $('#dTitle').textContent = d.title;
+  $('#dDesc').textContent = d.description || '설명이 없습니다.';
+  $('#dTags').innerHTML = (d.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+  $('#dCat').textContent = d.category;
+  $('#dFile').textContent = d.fileName;
+  $('#dSize').textContent = fmtSize(d.size);
+  $('#dDate').textContent = fmtDate(d.createdAt);
+  $('#dDown').textContent = d.downloads.toLocaleString() + '회';
+  $('#pdfCanvas').hidden = true; $('#prevMsg').hidden = false; $('#prevMsg').textContent = '미리보기를 불러오는 중…';
+  $('#pgInfo').textContent = '– / –';
+  $('#detailDlg').showModal();
+  try {
+    if (!window.pdfjsLib) throw new Error('no pdfjs');
+    const blob = await Store.getFile(id);
+    if (viewer.pdf) viewer.pdf.destroy();
+    viewer.pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+    if (viewer.doc !== d) return;
+    await renderPage();
+  } catch (e) {
+    $('#prevMsg').textContent = '이 파일은 미리보기를 할 수 없어요. 다운로드해서 확인해 주세요.';
+  }
+}
+
+async function renderPage() {
+  const pdf = viewer.pdf; if (!pdf) return;
+  const page = await pdf.getPage(viewer.page);
+  const box = $('#canvasBox');
+  const targetW = Math.min(box.clientWidth - 40, 560);
+  const scale = targetW / page.getViewport({ scale: 1 }).width;
+  const dpr = window.devicePixelRatio || 1;
+  const vp = page.getViewport({ scale: scale * dpr });
+  const c = $('#pdfCanvas'); c.width = vp.width; c.height = vp.height; c.style.width = (vp.width / dpr) + 'px';
+  await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+  c.hidden = false; $('#prevMsg').hidden = true;
+  $('#pgInfo').textContent = `${viewer.page} / ${pdf.numPages}`;
+  $('#prevPg').disabled = viewer.page <= 1;
+  $('#nextPg').disabled = viewer.page >= pdf.numPages;
+}
+
+// Claude 미리보기 안에서는 새 창을 띄울 수 없어 페이지 안 뷰어를 씁니다
+const IN_CLAUDE = !!(window.claude && window.claude.use);
+
+// 새 탭 열기는 정식 웹 주소(http/https)로 배포했을 때만 제대로 동작합니다.
+// 파일을 더블클릭해 연 경우(file://)나 미리보기 화면에서는 blob:null 주소가 되어 빈 탭이 열리므로 숨깁니다.
+const CAN_NEW_TAB = !IN_CLAUDE && /^https?:$/.test(location.protocol) && location.origin !== 'null';
+
+// "다운로드 · 바로 보기" 버튼: 같은 화면에 전체 화면 뷰어로 내용을 바로 띄웁니다
+async function openInBrowser(d) {
+  if (!d) return;
+  try {
+    const raw = await Store.getFile(d.id);
+    const blob = raw.type === 'application/pdf' ? raw : new Blob([raw], { type: 'application/pdf' });
+    openReader(d, blob);
+    d.downloads = await Store.incrementDownloads(d.id);
+    if (viewer.doc === d) $('#dDown').textContent = d.downloads.toLocaleString() + '회';
+    render();
+  } catch (e) {
+    toast('파일을 열지 못했어요. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
+// 뷰어의 "새 탭에서 열기" (배포한 사이트에서만 보임)
+function openNewTab() {
+  if (!reader.blob) return;
+  const url = URL.createObjectURL(reader.blob);
+  const win = window.open(url, '_blank');
+  if (!win) toast('브라우저가 새 탭을 막았어요. 주소창 오른쪽의 팝업 허용을 눌러주세요.');
+  setTimeout(() => URL.revokeObjectURL(url), 5 * 60 * 1000);
+}
+
+// 전체 화면 뷰어: 모든 페이지를 위에서 아래로 이어서 보여줍니다
+let readerJob = 0;
+async function openReader(d, blob) {
+  const job = ++readerJob;
+  const box = $('#rPages');
+  $('#rTitle').textContent = d.title;
+  $('#rInfo').textContent = fmtSize(d.size);
+  box.innerHTML = '<span class="ph">불러오는 중…</span>';
+  reader.doc = d; reader.blob = blob;
+  $('#readerDlg').showModal();
+  try {
+    if (!window.pdfjsLib) throw new Error('no pdfjs');
+    const pdf = await pdfjsLib.getDocument({ data: await blob.arrayBuffer() }).promise;
+    if (job !== readerJob) return pdf.destroy();
+    box.innerHTML = '';
+    $('#rInfo').textContent = `${pdf.numPages}쪽 · ${fmtSize(d.size)}`;
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.min(box.clientWidth - 32, 860);
+    for (let i = 1; i <= pdf.numPages; i++) {
+      if (job !== readerJob || !$('#readerDlg').open) break;
+      const page = await pdf.getPage(i);
+      const scale = width / page.getViewport({ scale: 1 }).width;
+      const vp = page.getViewport({ scale: scale * dpr });
+      const c = document.createElement('canvas');
+      c.width = vp.width; c.height = vp.height; c.style.width = (vp.width / dpr) + 'px';
+      c.setAttribute('aria-label', `${i}쪽`);
+      box.appendChild(c);
+      await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+    }
+    pdf.destroy();
+  } catch (e) {
+    box.innerHTML = '<span class="ph">이 파일은 화면에 표시할 수 없어요. ‘파일로 저장’으로 받아서 확인해 주세요.</span>';
+  }
+}
+const reader = { doc: null, blob: null };
+
+// 전체 화면 뷰어의 "파일로 저장"
+async function saveFile() {
+  const d = reader.doc; if (!d) return;
+  const filename = /\.pdf$/i.test(d.fileName) ? d.fileName : d.fileName + '.pdf';
+  try {
+    if (claudeDownloads) {
+      try { await claudeDownloads.save({ filename, data: reader.blob }); }
+      catch (err) { if (err && err.code === 'declined') return; throw err; }
+    } else {
+      const url = URL.createObjectURL(reader.blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    }
+  } catch (e) { toast('저장하지 못했어요. 잠시 후 다시 시도해 주세요.'); }
+}
+
+/* =========================================================
+   7) 등록 / 수정 (관리자 전용)
+   ========================================================= */
+let pickedFile = null;
+let editing = null; // 수정 중인 자료 (null이면 새로 등록)
+function resetUpload() {
+  pickedFile = null; editing = null; $('#upForm').reset(); $('#upErr').textContent = '';
+  showCurrentFile();
+}
+function showCurrentFile() {
+  $('#fileIn').value = '';
+  if (!editing) {
+    $('#fileChip').hidden = true; $('#drop').hidden = false;
+    $('#dropText').textContent = 'PDF 파일을 끌어다 놓거나 클릭해서 선택';
+    return;
+  }
+  $('#fileName').textContent = editing.fileName;
+  $('#fileSize').textContent = fmtSize(editing.size) + ' · 현재 파일';
+  $('#fileRemove').hidden = true; $('#fileChip').hidden = false; $('#drop').hidden = false;
+  $('#dropText').textContent = '새 PDF로 바꾸려면 끌어다 놓거나 클릭하세요';
+}
+function openEditor(doc) {
+  resetUpload();
+  editing = doc || null;
+  $('#uTitle').textContent = doc ? '자료 수정' : '자료 등록';
+  $('#upSubmit').textContent = doc ? '저장하기' : '등록하기';
+  if (doc) {
+    $('#fTitle').value = doc.title;
+    $('#fCat').value = CATEGORIES.includes(doc.category) ? doc.category : CATEGORIES[0];
+    $('#fTags').value = (doc.tags || []).join(', ');
+    $('#fDesc').value = doc.description || '';
+  }
+  showCurrentFile();
+  $('#uploadDlg').showModal();
+}
+function pickFile(file) {
+  $('#upErr').textContent = '';
+  if (!file) return;
+  const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+  if (!isPdf) { $('#upErr').textContent = 'PDF 파일만 올릴 수 있어요.'; return; }
+  if (file.size > MAX_SIZE) { $('#upErr').textContent = `파일이 너무 커요 (${fmtSize(file.size)}). 20MB 이하만 올릴 수 있어요.`; return; }
+  pickedFile = file;
+  $('#fileName').textContent = file.name; $('#fileSize').textContent = fmtSize(file.size) + (editing ? ' · 새 파일' : '');
+  $('#fileRemove').hidden = false; $('#fileChip').hidden = false; $('#drop').hidden = true;
+  if (!$('#fTitle').value.trim()) $('#fTitle').value = file.name.replace(/\.pdf$/i, '').replace(/[_-]+/g, ' ').trim();
+}
+
+async function submitUpload(e) {
+  e.preventDefault();
+  const title = $('#fTitle').value.trim();
+  if (!editing && !pickedFile) return ($('#upErr').textContent = 'PDF 파일을 먼저 선택해 주세요.');
+  if (!title) { $('#fTitle').focus(); return ($('#upErr').textContent = '제목을 입력해 주세요.'); }
+  if (!(await Store.isAdmin())) return ($('#upErr').textContent = '로그인이 풀렸어요. 다시 로그인해 주세요.');
+  const btn = $('#upSubmit'); const label = btn.textContent;
+  btn.disabled = true; btn.textContent = editing ? '저장 중…' : '등록 중…';
+  try {
+    const meta = {
+      title, category: $('#fCat').value, description: $('#fDesc').value.trim(),
+      tags: $('#fTags').value.split(',').map(t => t.trim()).filter(Boolean).slice(0, 8),
+    };
+    if (pickedFile) { meta.size = pickedFile.size; meta.fileName = pickedFile.name; }
+    let msg;
+    if (editing) {
+      const saved = await Store.update(editing.id, meta, pickedFile);
+      state.docs = state.docs.map(d => d.id === saved.id ? saved : d);
+      if (pickedFile) thumbs.delete(saved.id);
+      msg = '수정했어요';
+    } else {
+      const saved = await Store.add(meta, pickedFile);
+      state.docs.push(saved);
+      msg = '자료를 등록했어요';
+    }
+    $('#uploadDlg').close(); render(); renderAdmin(); toast(msg);
+  } catch (err) {
+    $('#upErr').textContent = (editing ? '저장하지' : '등록하지') + ' 못했어요. 권한이 없거나, 저장 공간이 부족하거나, 연결에 문제가 있을 수 있어요.';
+  } finally { btn.disabled = false; btn.textContent = label; }
+}
+
+/* =========================================================
+   7-2) 관리자 화면
+   ========================================================= */
+const admin = { q: '', confirmId: null, authed: false, setup: false };
+
+async function go(view) {
+  const isAdmin = view === 'admin';
+  $('#publicView').hidden = isAdmin; $('#adminView').hidden = !isAdmin; $('#adminLink').hidden = isAdmin;
+  try { history.replaceState(null, '', isAdmin ? '#admin' : location.pathname + location.search); } catch (e) {}
+  window.scrollTo(0, 0);
+  if (isAdmin) { admin.authed = await Store.isAdmin(); await showAdmin(); }
+  else render();
+}
+
+async function showAdmin() {
+  $('#loginBox').hidden = admin.authed;
+  $('#adminBox').hidden = !admin.authed;
+  if (admin.authed) return renderAdmin();
+  admin.setup = Store.needsSetup ? await Store.needsSetup() : false;
+  const email = Store.authMode === 'email';
+  $('#emailField').hidden = !email;
+  $('#pw2Field').hidden = !admin.setup;
+  $('#loginTitle').textContent = admin.setup ? '관리자 비밀번호 만들기' : '관리자 로그인';
+  $('#loginDesc').textContent = admin.setup
+    ? '처음 한 번만 정하면 돼요. 이 비밀번호로 자료를 등록·수정·삭제합니다.'
+    : '자료를 등록·수정·삭제하려면 로그인하세요.';
+  $('#loginPw').autocomplete = admin.setup ? 'new-password' : 'current-password';
+  $('#loginSubmit').textContent = admin.setup ? '비밀번호 만들고 시작하기' : '로그인';
+  $('#loginErr').textContent = '';
+  setTimeout(() => (email ? $('#loginEmail') : $('#loginPw')).focus(), 0);
+}
+
+async function submitLogin(e) {
+  e.preventDefault();
+  const pw = $('#loginPw').value;
+  const btn = $('#loginSubmit'); btn.disabled = true;
+  try {
+    if (admin.setup) {
+      if (pw.length < 4) throw new Error('비밀번호는 4자 이상으로 정해 주세요.');
+      if (pw !== $('#loginPw2').value) throw new Error('두 비밀번호가 서로 달라요.');
+      await Store.setupPassword(pw);
+    } else {
+      if (Store.authMode === 'email' && !$('#loginEmail').value.trim()) throw new Error('이메일을 입력해 주세요.');
+      if (!pw) throw new Error('비밀번호를 입력해 주세요.');
+      await Store.login({ email: $('#loginEmail').value.trim(), password: pw });
+    }
+    $('#loginForm').reset();
+    admin.authed = true; await showAdmin(); toast('관리자로 로그인했어요');
+  } catch (err) {
+    $('#loginErr').textContent = err.message || '로그인하지 못했어요.';
+  } finally { btn.disabled = false; }
+}
+
+function renderAdmin() {
+  if ($('#adminBox').hidden) return;
+  const q = admin.q.trim().toLowerCase();
+  const list = state.docs
+    .filter(d => !q || (d.title + ' ' + d.fileName).toLowerCase().includes(q))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  $('#admCount').textContent = `${state.docs.length}건`;
+  $('#admRows').innerHTML = list.length ? list.map(d => `
+    <tr>
+      <td><div class="tt">${esc(d.title)}</div><div class="sub">${esc(d.fileName)}</div></td>
+      <td><span class="catpill">${esc(d.category)}</span></td>
+      <td class="num">${fmtSize(d.size)}</td>
+      <td class="num">${fmtDate(d.createdAt)}</td>
+      <td class="num">${d.downloads.toLocaleString()}</td>
+      <td class="acts">${admin.confirmId === d.id
+        ? `<span class="ask">삭제할까요?</span><button class="btn sm danger solid" type="button" data-del-yes="${d.id}">삭제</button><button class="btn sm" type="button" data-del-no>취소</button>`
+        : `<button class="btn sm" type="button" data-view="${d.id}">보기</button><button class="btn sm" type="button" data-edit="${d.id}">수정</button><button class="btn sm danger" type="button" data-del="${d.id}">삭제</button>`}</td>
+    </tr>`).join('')
+    : `<tr><td colspan="6" class="none">${state.docs.length ? '찾는 자료가 없어요.' : '등록된 자료가 없어요. ‘자료 등록’으로 첫 자료를 올려보세요.'}</td></tr>`;
+}
+
+async function onAdminTable(e) {
+  const t = e.target.closest('button'); if (!t) return;
+  const find = id => state.docs.find(x => x.id === id);
+  if (t.dataset.view) {
+    const d = find(t.dataset.view);
+    try { const raw = await Store.getFile(d.id); openReader(d, raw.type === 'application/pdf' ? raw : new Blob([raw], { type: 'application/pdf' })); }
+    catch (err) { toast('파일을 열지 못했어요.'); }
+  } else if (t.dataset.edit) {
+    openEditor(find(t.dataset.edit));
+  } else if (t.dataset.del) {
+    admin.confirmId = t.dataset.del; renderAdmin();
+  } else if ('delNo' in t.dataset) {
+    admin.confirmId = null; renderAdmin();
+  } else if (t.dataset.delYes) {
+    const id = t.dataset.delYes;
+    try {
+      if (!(await Store.isAdmin())) throw new Error('auth');
+      await Store.remove(id);
+      state.docs = state.docs.filter(x => x.id !== id); thumbs.delete(id);
+      admin.confirmId = null; renderAdmin(); render(); toast('삭제했어요');
+    } catch (err) { admin.confirmId = null; renderAdmin(); toast('삭제하지 못했어요. 권한을 확인해 주세요.'); }
+  }
+}
+
+/* =========================================================
+   8) 이벤트 연결 & 시작
+   ========================================================= */
+function bind() {
+  $('#fCat').innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join('');
+  $('#q').addEventListener('input', e => { state.q = e.target.value; $('#clearQ').hidden = !state.q; render(); });
+  $('#clearQ').addEventListener('click', () => { state.q = ''; $('#q').value = ''; $('#clearQ').hidden = true; $('#q').focus(); render(); });
+  $('#sort').addEventListener('change', e => { state.sort = e.target.value; render(); });
+  $('#chips').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (b) { state.cat = b.dataset.cat; render(); } });
+  $('#grid').addEventListener('click', e => {
+    const o = e.target.closest('[data-open]');
+    if (o) return openInBrowser(state.docs.find(x => x.id === o.dataset.open));
+    const c = e.target.closest('.cardmain'); if (c) openDetail(c.dataset.id);
+  });
+  $('#empty').addEventListener('click', e => {
+    if (e.target.id === 'resetFilter') { state.q = ''; state.cat = '전체'; $('#q').value = ''; $('#clearQ').hidden = true; render(); }
+  });
+  // 사이트 제목 → 홈 (필터 초기화, 열린 창 닫기, 맨 위로)
+  $('#homeLink').addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('dialog[open]').forEach(d => d.close());
+    state.q = ''; state.cat = '전체'; state.sort = 'new';
+    $('#q').value = ''; $('#clearQ').hidden = true; $('#sort').value = 'new';
+    go('public');
+  });
+  // 관리자
+  $('#adminLink').addEventListener('click', e => { e.preventDefault(); go('admin'); });
+  document.querySelectorAll('[data-go="public"]').forEach(b => b.addEventListener('click', () => go('public')));
+  $('#loginForm').addEventListener('submit', submitLogin);
+  $('#admAdd').addEventListener('click', () => openEditor(null));
+  $('#admLogout').addEventListener('click', async () => { await Store.logout(); admin.authed = false; admin.confirmId = null; await showAdmin(); toast('로그아웃했어요'); });
+  $('#admQ').addEventListener('input', e => { admin.q = e.target.value; renderAdmin(); });
+  $('#admRows').addEventListener('click', onAdminTable);
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+  document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+  $('#prevPg').addEventListener('click', () => { if (viewer.page > 1) { viewer.page--; renderPage(); } });
+  $('#nextPg').addEventListener('click', () => { if (viewer.pdf && viewer.page < viewer.pdf.numPages) { viewer.page++; renderPage(); } });
+  $('#dlBtn').addEventListener('click', () => openInBrowser(viewer.doc));
+  $('#rSave').addEventListener('click', saveFile);
+  $('#rTab').addEventListener('click', openNewTab);
+  $('#rTab').hidden = !CAN_NEW_TAB;
+  $('#uploadDlg').addEventListener('close', resetUpload);
+  $('#fileIn').addEventListener('change', e => pickFile(e.target.files[0]));
+  $('#fileRemove').addEventListener('click', () => { pickedFile = null; showCurrentFile(); });
+  const drop = $('#drop');
+  ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => pickFile(e.dataTransfer.files[0]));
+  $('#upForm').addEventListener('submit', submitUpload);
+  window.addEventListener('dragover', e => e.preventDefault());
+  window.addEventListener('drop', e => e.preventDefault());
+}
+
+(async function start() {
+  bind();
+  try {
+    await Store.init();
+    state.docs = await Store.list();
+    $('#storeNote').textContent = Store.name === 'local' ? '저장 위치: 이 브라우저' : '저장 위치: Supabase';
+    $('#localNote').hidden = Store.name !== 'local';
+  } catch (e) {
+    toast('자료를 불러오지 못했어요. 새로고침해 주세요.');
+  }
+  render();
+  if (location.hash === '#admin') go('admin');
+})();
+</script>
+
+</body>
+</html>
