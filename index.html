@@ -289,7 +289,7 @@ table.adm .none{text-align:center;color:var(--muted);padding:36px 14px}
       <div class="admsearch"><input id="admQ" type="search" placeholder="제목, 파일명으로 찾기" aria-label="관리 목록 검색"></div>
       <div class="tablewrap">
         <table class="adm">
-          <thead><tr><th>제목</th><th>카테고리</th><th>용량</th><th>등록일</th><th>다운로드</th><th style="text-align:right">관리</th></tr></thead>
+          <thead><tr><th>제목</th><th id="catTh">카테고리</th><th>용량</th><th>등록일</th><th>다운로드</th><th style="text-align:right">관리</th></tr></thead>
           <tbody id="admRows"></tbody>
         </table>
       </div>
@@ -326,7 +326,7 @@ table.adm .none{text-align:center;color:var(--muted);padding:36px 14px}
           <p class="desc" id="dDesc"></p>
           <div class="tags" id="dTags"></div>
           <dl class="props">
-            <dt>카테고리</dt><dd id="dCat"></dd>
+            <dt class="catrow">카테고리</dt><dd class="catrow" id="dCat"></dd>
             <dt>파일명</dt><dd id="dFile"></dd>
             <dt>용량</dt><dd id="dSize"></dd>
             <dt>등록일</dt><dd id="dDate"></dd>
@@ -366,8 +366,8 @@ table.adm .none{text-align:center;color:var(--muted);padding:36px 14px}
           <label for="fTitle">제목</label>
           <input id="fTitle" maxlength="80" placeholder="예: 3주차 수업 정리 노트" required>
         </div>
-        <div class="row2">
-          <div class="field">
+        <div class="row2" id="catRow">
+          <div class="field" id="catField">
             <label for="fCat">카테고리</label>
             <select id="fCat"></select>
           </div>
@@ -421,7 +421,10 @@ table.adm .none{text-align:center;color:var(--muted);padding:36px 14px}
 /* =========================================================
    1) 설정
    ========================================================= */
-const CATEGORIES = ['미리보기', '숙제', '다시보기', '정리', '이달의 詩'];
+// 카테고리 목록. 비워두면 '전체'만 보이고 카테고리 선택·표시가 모두 숨겨집니다.
+// 다시 쓰려면 예: ['미리보기', '숙제', '다시보기', '정리', '이달의 詩']
+const CATEGORIES = [];
+const USE_CATS = CATEGORIES.length > 0;
 const MAX_SIZE = 20 * 1024 * 1024; // 20MB
 
 /* =========================================================
@@ -454,7 +457,7 @@ const LocalStore = {
     const SAMPLE = { 'React 입문 강의록 1주차': '미리보기' };
     const recs = this.db ? await this._req(this._store('readonly').getAll()) : [...this.mem.values()];
     for (const r of recs) {
-      if (CATEGORIES.includes(r.category)) continue;
+      if (!USE_CATS || CATEGORIES.includes(r.category)) continue;
       r.category = (r.sample && SAMPLE[r.title]) || OLD[r.category] || '정리';
       await this._put(r);
     }
@@ -635,7 +638,7 @@ function render() {
         <span class="ext">PDF</span>${d.sample ? '<span class="sample">예시</span>' : ''}
       </div>
       <div class="cbody">
-        <span class="cat">${esc(d.category)}</span>
+        ${USE_CATS ? `<span class="cat">${esc(d.category)}</span>` : ''}
         <h3>${highlight(d.title, q)}</h3>
         <div class="meta"><span>${fmtSize(d.size)}</span><span>${fmtDate(d.createdAt)}</span><span>${ICON_DOWN}${d.downloads.toLocaleString()}</span></div>
       </div>
@@ -684,7 +687,7 @@ if (window.claude && window.claude.use) window.claude.use('downloads').then(x =>
 async function openDetail(id) {
   const d = state.docs.find(x => x.id === id); if (!d) return;
   viewer.doc = d; viewer.page = 1;
-  $('#dCatHead').textContent = d.category;
+  $('#dCatHead').textContent = USE_CATS ? d.category : '자료 상세';
   $('#dTitle').textContent = d.title;
   $('#dDesc').textContent = d.description || '설명이 없습니다.';
   $('#dTags').innerHTML = (d.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
@@ -836,7 +839,7 @@ function openEditor(doc) {
   $('#upSubmit').textContent = doc ? '저장하기' : '등록하기';
   if (doc) {
     $('#fTitle').value = doc.title;
-    $('#fCat').value = CATEGORIES.includes(doc.category) ? doc.category : CATEGORIES[0];
+    if (USE_CATS) $('#fCat').value = CATEGORIES.includes(doc.category) ? doc.category : CATEGORIES[0];
     $('#fTags').value = (doc.tags || []).join(', ');
     $('#fDesc').value = doc.description || '';
   }
@@ -865,7 +868,7 @@ async function submitUpload(e) {
   btn.disabled = true; btn.textContent = editing ? '저장 중…' : '등록 중…';
   try {
     const meta = {
-      title, category: $('#fCat').value, description: $('#fDesc').value.trim(),
+      title, category: USE_CATS ? $('#fCat').value : (editing ? editing.category : ''), description: $('#fDesc').value.trim(),
       tags: $('#fTags').value.split(',').map(t => t.trim()).filter(Boolean).slice(0, 8),
     };
     if (pickedFile) { meta.size = pickedFile.size; meta.fileName = pickedFile.name; }
@@ -949,7 +952,7 @@ function renderAdmin() {
   $('#admRows').innerHTML = list.length ? list.map(d => `
     <tr>
       <td><div class="tt">${esc(d.title)}</div><div class="sub">${esc(d.fileName)}</div></td>
-      <td><span class="catpill">${esc(d.category)}</span></td>
+      ${USE_CATS ? `<td><span class="catpill">${esc(d.category)}</span></td>` : ''}
       <td class="num">${fmtSize(d.size)}</td>
       <td class="num">${fmtDate(d.createdAt)}</td>
       <td class="num">${d.downloads.toLocaleString()}</td>
@@ -957,7 +960,7 @@ function renderAdmin() {
         ? `<span class="ask">삭제할까요?</span><button class="btn sm danger solid" type="button" data-del-yes="${d.id}">삭제</button><button class="btn sm" type="button" data-del-no>취소</button>`
         : `<button class="btn sm" type="button" data-view="${d.id}">보기</button><button class="btn sm" type="button" data-edit="${d.id}">수정</button><button class="btn sm danger" type="button" data-del="${d.id}">삭제</button>`}</td>
     </tr>`).join('')
-    : `<tr><td colspan="6" class="none">${state.docs.length ? '찾는 자료가 없어요.' : '등록된 자료가 없어요. ‘자료 등록’으로 첫 자료를 올려보세요.'}</td></tr>`;
+    : `<tr><td colspan="${USE_CATS ? 6 : 5}" class="none">${state.docs.length ? '찾는 자료가 없어요.' : '등록된 자료가 없어요. ‘자료 등록’으로 첫 자료를 올려보세요.'}</td></tr>`;
 }
 
 async function onAdminTable(e) {
@@ -989,6 +992,12 @@ async function onAdminTable(e) {
    ========================================================= */
 function bind() {
   $('#fCat').innerHTML = CATEGORIES.map(c => `<option>${c}</option>`).join('');
+  if (!USE_CATS) {
+    $('#chips').hidden = false;
+    $('#catField').hidden = true; $('#catRow').style.gridTemplateColumns = '1fr';
+    $('#catTh').hidden = true;
+    document.querySelectorAll('.catrow').forEach(el => el.hidden = true);
+  }
   $('#q').addEventListener('input', e => { state.q = e.target.value; $('#clearQ').hidden = !state.q; render(); });
   $('#clearQ').addEventListener('click', () => { state.q = ''; $('#q').value = ''; $('#clearQ').hidden = true; $('#q').focus(); render(); });
   $('#sort').addEventListener('change', e => { state.sort = e.target.value; render(); });
